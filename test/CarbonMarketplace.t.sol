@@ -9,7 +9,7 @@ contract CarbonMarketplaceTest is Test {
     CarbonMarketplace public marketplace;
     CarbonCredits public carbonCredits;
     address public owner;
-    
+
     CarbonMarketplace.ListingStatus constant ACTIVE = CarbonMarketplace.ListingStatus.Active;
 
     function setUp() public {
@@ -17,7 +17,7 @@ contract CarbonMarketplaceTest is Test {
         vm.startPrank(owner);
         carbonCredits = new CarbonCredits();
         marketplace = new CarbonMarketplace(address(carbonCredits));
-        
+
         // Create and mint credits for testing
         uint256 creditId = carbonCredits.createCreditType(2023, "Solar", "US", "Gold");
         carbonCredits.mint(owner, creditId, 1000, "");
@@ -41,7 +41,8 @@ contract CarbonMarketplaceTest is Test {
 
         (
             address seller,
-            /*uint256 tokenId*/,
+            /*uint256 tokenId*/
+            ,
             uint256 listingPrice,
             uint256 amountOfCreditsForSale,
             uint256 totalAmountPurchased,
@@ -65,7 +66,7 @@ contract CarbonMarketplaceTest is Test {
 
         // Fund the buyer
         vm.deal(buyer, cost);
-        
+
         // List the credits
         vm.startPrank(owner);
         marketplace.listCredit(creditId, listingAmount, price);
@@ -74,7 +75,7 @@ contract CarbonMarketplaceTest is Test {
         // Record balances before purchase
         uint256 sellerBalanceBefore = owner.balance;
         uint256 buyerBalanceBefore = buyer.balance;
-        
+
         // Make purchase
         vm.startPrank(buyer);
         vm.expectEmit(true, true, false, true);
@@ -116,4 +117,14 @@ contract CarbonMarketplaceTest is Test {
         assertEq(totalPurchased, purchaseAmount);
         console.log("totalPurchased", totalPurchased);
     }
-} 
+
+    function testCanGetListingDetails() public {
+        uint256 creditId = 1;
+        uint256 amount = 100;
+        uint256 price = 5 ether;
+
+        vm.startPrank(owner);
+        marketplace.listCredit(creditId, amount, price);
+        vm.stopPrank();
+    }
+}
