@@ -127,15 +127,26 @@ contract CarbonMarketplace is Ownable, ReentrancyGuard, IERC1155Receiver {
         return listings[creditId];
     }
 
-    function getListingDetails(uint256 creditId) external view returns (address, uint256, uint256, uint256, uint256, uint256) {
+    function getListingDetails(uint256 creditId)
+        external
+        view
+        returns (address, uint256, uint256, uint256, uint256, uint256)
+    {
         Listing memory listing = listings[creditId];
-        return (listing.seller, listing.tokenId, listing.price, listing.amountOfCreditsForSale, listing.totalAmountPurchased, listing.createdAt);
+        return (
+            listing.seller,
+            listing.tokenId,
+            listing.price,
+            listing.amountOfCreditsForSale,
+            listing.totalAmountPurchased,
+            listing.createdAt
+        );
     }
 
     function withdrawFunds() external nonReentrant {
         uint256 amount = pendingPayments[msg.sender];
         if (amount == 0) revert CarbonMarketplace__NoFundsToWithdraw();
-        
+
         pendingPayments[msg.sender] = 0;
 
         (bool success,) = payable(msg.sender).call{value: amount}("");
